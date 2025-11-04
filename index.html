@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Prachi Deore — Portfolio (Interactive)</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  /* ========== Typography & reset ========== */
+  @font-face {
+    font-family: 'InterVar';
+    src: local('Inter'), local('Poppins');
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html,body { height: 100%; }
+  body {
+    font-family: InterVar, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,#071022 0%, #0f1724 60%);
+    color: #e6f7f7;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    transition: background .4s ease, color .3s ease;
+    padding-bottom: 80px;
+  }
+
+  /* ========== Layout ========== */
+  .container { max-width: 1100px; margin: 36px auto; padding: 20px; }
+  header.hero {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .intro {
+    padding: 26px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.04);
+    backdrop-filter: blur(8px);
+  }
+  .name { font-size: 2.4rem; color: #00f0e6; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .tag { color:#bfeeee; margin-bottom: 12px; font-weight:600; }
+  .bio { color:#cde; line-height:1.5; margin-bottom: 16px; }
+  .cta-row { display:flex; gap:12px; flex-wrap:wrap; }
+
+  .btn {
+    background: rgba(0,255,226,0.06);
+    border: 1px solid rgba(0,255,226,0.14);
+    color: #00f0e6;
+    padding: 10px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight:600;
+    transition: transform .18s ease, background .18s;
+  }
+  .btn:hover{ transform: translateY(-4px); background: rgba(0,255,226,0.12); }
+
+  /* hero right column - profile card */
+  .profile-card {
+    padding: 20px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(8px);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .profile-top{ display:flex; gap:12px; align-items:center; }
+  .avatar {
+    width:72px; height:72px; border-radius:14px;
+    background:linear-gradient(135deg,#00f0e6,#7ce7ff);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; color:#042; font-size:22px;
+    box-shadow: 0 6px 20px rgba(0,240,230,0.08);
+  }
+  .profile-meta small { display:block; color:#bfe; }
+  .contact-links { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+  .link-pill { padding:8px 10px; border-radius:10px; background: rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.02); color:#bfe; font-size:0.9rem; text-decoration:none; }
+
+  /* ========== Sections ========== */
+  .section {
+    margin: 22px 0;
+    padding: 18px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(6px);
+  }
+  .section h3 { color:#8ffff1; margin-bottom:12px; font-size:1.2rem; }
+  .skill-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+  }
+
+  .skill {
+    padding:16px; border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.02);
+    cursor:pointer; transition: transform .18s ease, box-shadow .18s;
+    text-align:center;
+  }
+  .skill:hover{ transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,240,230,0.05); }
+  .skill .emoji{ font-size:20px; display:block; margin-bottom:8px; }
+
+  /* certificate badges + toggle */
+  .cert-list { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .badge {
+    padding:8px 12px; border-radius:999px; font-weight:700; font-size:0.86rem;
+    background: linear-gradient(90deg, rgba(0,255,230,0.09), rgba(0,255,230,0.03));
+    border: 1px solid rgba(0,255,230,0.12);
+    color:#a6fff7; cursor:pointer;
+  }
+  .small-toggle { display:inline-block; margin-top:10px; padding:8px 10px; border-radius:8px; cursor:pointer; color:#00f0e6; border:1px solid rgba(0,255,230,0.08); background:rgba(0,0,0,0.2); }
+
+  /* projects area */
+  .project {
+    margin-top:10px; padding:12px; border-radius:10px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.14), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.02);
+  }
+
+  /* timeline */
+  .timeline {
+    position:relative; padding-left:24px; margin-top:8px;
+  }
+  .timeline:before{
+    content:""; position:absolute; left:8px; top:0; bottom:0; width:3px; background:linear-gradient(#00f0e6,#7ce7ff); border-radius:6px; opacity:0.12;
+  }
+  .tl-item { position:relative; margin-bottom:18px; padding:12px 14px 12px 30px; border-radius:10px; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.02); }
+  .tl-item:before { content:""; position:absolute; left:-8px; top:18px; width:14px; height:14px; border-radius:50%; background:#00f0e6; box-shadow: 0 4px 18px rgba(0,240,230,0.08); }
+
+  /* chat */
+  .chat-wrapper { display:flex; gap:16px; align-items:flex-start; }
+  .chat-left { flex:1; min-width:260px; max-width:520px; display:flex; flex-direction:column; gap:8px; }
+  .chat-messages {
+    height:360px; overflow:auto; padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.06));
+    border: 1px solid rgba(255,255,255,0.02);
+  }
+  .msg { margin-bottom:12px; display:flex; gap:8px; align-items:flex-end; }
+  .msg.recruiter { justify-content:flex-start; }
+  .msg.bot { justify-content:flex-end; }
+  .bubble {
+    max-width:72%; padding:10px 12px; border-radius:12px; line-height:1.35; font-size:0.95rem;
+  }
+  .bubble.rec { background: rgba(255,255,255,0.06); color:#dff; border:1px solid rgba(255,255,255,0.02); }
+  .bubble.bot { background: linear-gradient(90deg,#00f0e6,#7ce7ff); color:#042; font-weight:700; border: none; }
+
+  .chat-controls { display:flex; gap:8px; margin-top:8px; }
+  .chat-input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:rgba(0,0,0,0.1); color:inherit; }
+  .quick-q { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+
+  /* right column - live inspector */
+  .side-panel { width:340px; min-width:260px; border-radius:12px; padding:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02); height:fit-content; }
+  .side-panel h4 { color:#9ff; margin-bottom:8px; }
+  .inspector { font-size:0.92rem; color:#cde; line-height:1.4; }
+  .inspector .label { color:#8ff; font-weight:700; }
+
+  /* footer */
+  footer.fixed {
+    position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:center; padding:12px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45));
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+  .theme-toggle {
+    position: fixed; top:18px; right:18px; padding:10px 12px; border-radius:12px; background:rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.03); color:#bff; cursor:pointer;
+  }
+
+  /* light mode */
+  body.light {
+    background: linear-gradient(180deg,#f3fbff 0%, #eaf7ff 60%);
+    color:#052028;
+  }
+  body.light .name { color:#0066cc; }
+  body.light .section { background: linear-gradient(180deg, rgba(2,40,80,0.02), rgba(2,40,80,0.01)); border:1px solid rgba(2,40,80,0.03); }
+  body.light .btn{ color:#0066cc; border-color: rgba(0,102,204,0.18); background: rgba(0,102,204,0.03); }
+  body.light .bubble.bot { color:#003; }
+  body.light .bubble.rec { color:#003; background: rgba(2,40,80,0.04); }
+
+  /* small screens */
+  @media (max-width:900px){
+    header.hero { grid-template-columns:1fr; }
+    .chat-wrapper { flex-direction:column; }
+    .side-panel { width:100%; order:3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="theme-toggle" id="themeToggle" title="Toggle light/dark">🌙</div>
+
+<div class="container">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="intro">
+      <div class="name">Prachi Deore</div>
+      <div class="tag">B.Tech — Cloud Technology & Information Security (Expected 2026) • CGPA 9.64</div>
+      <div class="bio">Tech student with hands-on cloud & cybersecurity experience. Built cloud/AI projects, participated in hackathons, and published research on data deduplication. Open to internships & projects.</div>
+      <div class="cta-row">
+        
+        <button class="btn" onclick="scrollToSection('technical')">Technical Skills</button>
+        <button class="btn" onclick="scrollToSection('experience')">Experience & Timeline</button>
+        <button class="btn" onclick="scrollToSection('chat')">Chat with Prachi</button>
+        <a class="btn" href="mailto:prachideore224@gmail.com">Contact</a>
+      </div>
+    </div>
+
+    <aside class="profile-card" aria-label="Profile">
+      <div class="profile-top">
+        <div class="avatar">PD</div>
+        <div class="profile-meta">
+          <div style="font-weight:800">Prachi Deore</div>
+          <small>Cloud Technology & InfoSec</small>
+          <small>Nashik, India</small>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a class="link-pill" href="https://www.linkedin.com/in/prachi-deore-638872292/" target="_blank">LinkedIn</a>
+        <a class="link-pill" href="https://github.com/" target="_blank">GitHub</a>
+        <a class="link-pill" href="mailto:prachideore224@gmail.com">Email</a>
+      </div>
+
+      <div style="margin-top:8px;">
+        <div style="font-size:0.85rem;color:#bfe">Top Skills</div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <div class="badge">Cloud</div>
+          <div class="badge">Cybersecurity</div>
+          <div class="badge">Python</div>
+        </div>
+      </div>
+    </aside>
+  </header>
+
+  <!-- Technical Skills -->
+  <section id="technical" class="section" aria-labelledby="technical-heading">
+    <h3 id="technical-heading">Technical Skills — click a skill to explore</h3>
+    <div class="skill-grid" id="skillsGrid">
+      <!-- JS will populate skills here -->
+    </div>
+
+    <!-- Skill details area (dynamically shown) -->
+    <div id="skillDetails" style="margin-top:16px; display:none;">
+      <h4 style="color:#9ef">Certificates & Evidence</h4>
+      <div id="certList" class="cert-list"></div>
+      <div id="projectToggleWrap" style="margin-top:8px; display:none;">
+        <span class="small-toggle" id="seeWhereBtn" onclick="toggleProjectsView()">See where I applied this skill ↓</span>
+      </div>
+      <div id="projectList"></div>
+    </div>
+  </section>
+
+  <!-- Experience & Achievements timeline -->
+  <section id="experience" class="section">
+    <h3>Experience & Achievements (Timeline)</h3>
+    <div class="timeline" id="timelineRoot">
+      <!-- JS will populate timeline -->
+    </div>
+  </section>
+
+  <!-- Chat Section -->
+  <section id="chat" class="section">
+    <h3>Chat with Prachi — simulated assistant (offline)</h3>
+    <div class="chat-wrapper">
+      <div class="chat-left">
+        <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+
+        <div class="chat-controls">
+          <input id="chatInput" class="chat-input" placeholder="Ask something like: 'Tell me about your cloud experience'">
+          <button class="btn" onclick="sendUserMessage()">Send</button>
+        </div>
+
+        <div class="quick-q" style="margin-top:6px;">
+          <button class="btn" onclick="askBot('Tell me about your cloud skills')">Tell me about Cloud</button>
+          <button class="btn" onclick="askBot('What projects did you build?')">Projects</button>
+          <button class="btn" onclick="askBot('Tell me about your internships')">Internships</button>
+          <button class="btn" onclick="askBot('What certificates do you have?')">Certificates</button>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <h4>Assistant Inspector</h4>
+        <div class="inspector" id="inspector">
+          <div><span class="label">Status:</span> <span id="insStatus">Idle</span></div>
+          <div style="margin-top:8px;"><span class="label">Data Source:</span> <div>Embedded portfolio object (no network)</div></div>
+          <div style="margin-top:8px;"><span class="label">Tips:</span>
+            <ul style="margin-top:6px;">
+              <li>Try: "Tell me about Ecosense AI"</li>
+              <li>Try: "Where did you intern?"</li>
+              <li>Click skills on the Skills section to connect answers to UI</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="fixed">
+    <div>© 2025 Prachi Deore — Built with Mind, To Save Your Time • Offline Demo • Expandable</div>
+  </footer>
+</div>
+
+<script>
+/* =========================
+   Portfolio data (edit to expand)
+   ========================= */
+const portfolioData = {
+  name: "Prachi Deore",
+  title: "B.Tech in Cloud Technology & Information Security (Expected 2026)",
+  email: "prachideore224@gmail.com",
+  location: "Nashik, India",
+  skills: [
+    {
+      id: "cloud",
+      name: "Cloud Technology",
+      emoji: "☁️",
+      certificates: [
+        { title: "AWS Docker & Kubernetes", issuer: "Self-study / course", year: 2024 },
+        { title: "Google Cloud Badges", issuer: "Google", year: 2024 }
+      ],
+      projects: [
+        { title: "Ecosense AI", summary: "Green Skills & AI cloud app (deployed on cloud).", relation: "Used cloud infra, containers, GCP/AWS." },
+        { title: "Data Deduplication Research", summary: "Research on efficient storage management (published).", relation: "Cloud storage optimization use-case." }
+      ]
+    },
+    {
+      id: "cyber",
+      name: "Cyber Security",
+      emoji: "🔐",
+      certificates: [
+        { title: "TATA CyberSecurity Analyst - Forage", issuer: "TATA / Forage", year: 2023 }
+      ],
+      projects: [
+        { title: "Phishing Website Detector", summary: "Tool to detect scam sites.", relation: "Internship deliverable at Tamizan Skills." },
+        { title: "Security Tools Suite", summary: "Keylogger (demo), port scanner, secure chat app.", relation: "Built during Tamizan Skills internship." }
+      ]
+    },
+    {
+      id: "ai",
+      name: "Artificial Intelligence",
+      emoji: "🤖",
+      certificates: [
+        { title: "IBM SkillsBuild - AI Internship", issuer: "IBM / EDUNET Foundation", year: 2024 }
+      ],
+      projects: [
+        { title: "Ecosense AI", summary: "AI models for environmental data analysis.", relation: "Model + cloud deployment." }
+      ]
+    },
+    {
+      id: "python",
+      name: "Python",
+      emoji: "🐍",
+      certificates: [
+        { title: "Python Libraries Certificate", issuer: "Course", year: 2023 }
+      ],
+      projects: [
+        { title: "Data Science & ML Internship Projects", summary: "Hands-on ML exercises and pipelines.", relation: "Used Python, scikit-learn, pandas." }
+      ]
+    }
+  ],
+  experience: [
+    { date: "2024-06", title: "CyberSecurity Intern", org: "Tamizan Skills", summary: "Developed cybersecurity tools: phishing detector, password checker, keylogger (demo), port scanner, secure chat app, Wi-Fi scanner." },
+    { date: "2024-03", title: "AI Intern (IBM SkillsBuild)", org: "EDUNET / IBM", summary: "Guided AI projects and IBM modules; practical exposure to AI tools." },
+    { date: "2023-11", title: "Android Developer Virtual Internship", org: "Google for Developers", summary: "Virtual internship on Android fundamentals." },
+    { date: "2023-09", title: "Technovation Hackathon (5th)", org: "Technovation", summary: "Participated with 'Ecosense AI' project." },
+    { date: "2023-04", title: "Research Paper Published", org: "IJFMR", summary: "Data Deduplication Techniques for Efficient Storage Management." }
+  ],
+  certificates: [
+    "TATA CyberSecurity Analyst (Forage)",
+    "AWS Docker and Kubernetes",
+    "Python Libraries",
+    "Data Science and Machine Learning Internship",
+    "Google Fundamentals of Data Science",
+    "Google Cloud Badges"
+  ],
+  extras: {
+    languages: ["English", "Marathi", "Hindi"],
+    github: "https://github.com/",
+    linkedin: "https://www.linkedin.com/in/prachi-deore-638872292/"
+  }
+};
+
+/* =========================
+   UI population logic
+   ========================= */
+
+// populate skills grid
+const skillsGrid = document.getElementById("skillsGrid");
+portfolioData.skills.forEach(skill => {
+  const el = document.createElement("div");
+  el.className = "skill";
+  el.setAttribute("data-id", skill.id);
+  el.innerHTML = `<div class="emoji">${skill.emoji}</div><div style="font-weight:800">${skill.name}</div><div style="font-size:.85rem;color:#bfe;margin-top:6px">Click to open</div>`;
+  el.onclick = () => openSkill(skill.id);
+  skillsGrid.appendChild(el);
+});
+
+// populate timeline
+const timelineRoot = document.getElementById("timelineRoot");
+portfolioData.experience.forEach(item => {
+  const div = document.createElement("div");
+  div.className = "tl-item";
+  div.innerHTML = `<strong style="color:#caffff">${item.title}</strong> <div style="font-size:.86rem;color:#bfe">${item.org} • ${formatDate(item.date)}</div><div style="margin-top:8px;color:#cde">${item.summary}</div>`;
+  timelineRoot.appendChild(div);
+});
+
+/* =========================
+   Skill detail interactions
+   ========================= */
+
+let currentSkill = null;
+function openSkill(id){
+  const skill = portfolioData.skills.find(s=>s.id===id);
+  currentSkill = skill;
+  document.getElementById("skillDetails").style.display = "block";
+  const certList = document.getElementById("certList");
+  certList.innerHTML = "";
+  skill.certificates.forEach(c=>{
+    const span = document.createElement("span");
+    span.className="badge";
+    span.textContent = c.title;
+    span.title = `${c.issuer || ""} • ${c.year || ""}`;
+    span.onclick = (ev) => {
+      ev.stopPropagation();
+      showCertificateDetail(c, skill);
+    };
+    certList.appendChild(span);
+  });
+  // show toggle for projects if they exist
+  const projectToggleWrap = document.getElementById("projectToggleWrap");
+  if(skill.projects && skill.projects.length){
+    projectToggleWrap.style.display = "block";
+    document.getElementById("projectList").innerHTML = "";
+  } else {
+    projectToggleWrap.style.display = "none";
+    document.getElementById("projectList").innerHTML = "<div style='margin-top:8px;color:#bfe'>No listed projects for this skill yet.</div>";
+  }
+  // scroll into view
+  document.getElementById("skillDetails").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function showCertificateDetail(cert, skill){
+  // small dynamic inspector: show project(s) related to this cert
+  const projectList = document.getElementById("projectList");
+  projectList.innerHTML = `<div class="project"><strong>${cert.title}</strong><div style="color:#cde;margin-top:6px">Issuer: ${cert.issuer || "—"} • Year: ${cert.year || "—"}</div>
+    <div style="margin-top:10px;color:#dff;font-weight:700">Related projects:</div>
+    <div style="margin-top:8px">${skill.projects.map(p=>`<div style="margin-bottom:8px"><div style="font-weight:800">${p.title}</div><div style="font-size:.9rem;color:#cde">${p.summary}</div></div>`).join("")}</div>
+    <div style="margin-top:8px"><button class="btn" onclick="askBot('Tell me about ${skill.name}')">Ask assistant about this skill</button></div>
+  </div>`;
+  projectList.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+// toggle projects
+function toggleProjectsView(){
+  const projectList = document.getElementById("projectList");
+  if(!currentSkill) return;
+  if(projectList.innerHTML.trim()===""){
+    // render skill projects
+    projectList.innerHTML = currentSkill.projects.map(p=>`<div class="project"><div style="font-weight:800">${p.title}</div><div style="color:#cde;margin-top:6px">${p.summary}</div><div style="margin-top:8px"><span class="small-toggle" onclick="askBot('Tell me about ${p.title}')">Ask assistant about this project</span></div></div>`).join("");
+    projectList.scrollIntoView({behavior:"smooth"});
+  } else {
+    projectList.innerHTML = "";
+  }
+}
+
+/* =========================
+   Chatbot logic (rule-based)
+   ========================= */
+
+const chatMessages = document.getElementById("chatMessages");
+const inspectorStatus = document.getElementById("insStatus");
+
+function appendMessage(text, who="bot"){
+  const wrapper = document.createElement("div");
+  wrapper.className = "msg " + (who==="user" ? "recruiter" : "bot");
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + (who==="user" ? "rec" : "bot");
+  bubble.innerHTML = text;
+  wrapper.appendChild(bubble);
+  chatMessages.appendChild(wrapper);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+/* minimal typing effect */
+function botReplyTyped(text, delay=300){
+  inspectorStatus.textContent = "Typing...";
+  const typingBubbleWrap = document.createElement("div");
+  typingBubbleWrap.className = "msg bot";
+  const typingBubble = document.createElement("div");
+  typingBubble.className = "bubble bot";
+  typingBubble.innerHTML = "";
+  typingBubbleWrap.appendChild(typingBubble);
+  chatMessages.appendChild(typingBubbleWrap);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  let i=0;
+  const speed = 12;
+  function step(){
+    if(i<=text.length){
+      typingBubble.innerHTML = text.slice(0,i) + (i%3===0 ? "<span style='opacity:.6'>▌</span>":"");
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      i++;
+      setTimeout(step, speed);
+    } else {
+      // final
+      typingBubble.innerHTML = text;
+      inspectorStatus.textContent = "Answered";
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+  setTimeout(step, delay);
+}
+
+/* basic NLU: check keywords & intents */
+function answerFromPortfolio(userText){
+  const q = userText.toLowerCase();
+  // intents
+  if(/cloud|aws|gcp|google cloud|docker|kubernetes/.test(q)){
+    const skill = portfolioData.skills.find(s=>s.id==="cloud");
+    if(!skill) return "I have cloud experience — but details are not loaded.";
+    const certs = skill.certificates.map(c=>c.title).join(", ");
+    const projects = skill.projects.map(p=>p.title).join("; ");
+    return `I specialize in Cloud Technology. Certificates: ${certs}. Projects where I applied cloud skills: ${projects}. You can click the Cloud skill in the Skills section to see badges & projects.`;
+  }
+
+  if(/cyber|security|phish|phishing|tamizan|vulnerability|port scanner/.test(q)){
+    const skill = portfolioData.skills.find(s=>s.id==="cyber");
+    const certs = skill.certificates.map(c=>c.title).join(", ");
+    const projects = skill.projects.map(p=>`${p.title} — ${p.summary}`).join("<br>");
+    return `During my Tamizan Skills internship I built security tools. Certificates: ${certs}. Examples: <br>${projects}`;
+  }
+
+  if(/project|projects|hackathon|ecosen|ecosense|ecosense ai|technovation/.test(q)){
+    const projects = portfolioData.skills.flatMap(s=>s.projects);
+    const unique = projects.map(p=>p.title + " — " + p.summary).slice(0,6).join("<br>");
+    return `Key projects: <br>${unique}<br>Tip: Click the skill badges to view certificates and project details.`;
+  }
+
+  if(/intern|internship|experience/.test(q)){
+    const ex = portfolioData.experience.map(e=>`${formatDate(e.date)} — ${e.title} @ ${e.org} (${e.summary})`).join("<br>");
+    return `My notable experience: <br>${ex}`;
+  }
+
+  if(/certificate|certifications|badge|badges/.test(q)){
+    const c = portfolioData.certificates.join(", ");
+    return `Relevant certificates include: ${c}. Click certificate badges in the Skills section to view which projects used them.`;
+  }
+
+  if(/research|paper|deduplication|ijfmr/.test(q)){
+    const rp = portfolioData.experience.find(e=>e.title.toLowerCase().includes("research"));
+    if(rp) return `I published a research paper: "${rp.title}" (${formatDate(rp.date)}) — ${rp.summary}`;
+  }
+
+  if(/languages|marathi|english|hindi/.test(q)) {
+    return `I speak: ${portfolioData.extras.languages.join(", ")}.`;
+  }
+
+  if(/who are you|your name|introduce yourself|about you/.test(q)) {
+    return `I'm Prachi's assistant demo. Prachi is a B.Tech student focused on Cloud & InfoSec, with hands-on projects, internships, and publications. Ask about skills, projects, internships, or certificates.`;
+  }
+
+  if(/hello|hi|hey/.test(q)) return "Hi! I'm Prachi's portfolio assistant. Ask me about Cloud, Cybersecurity, Projects, Internships, or Certificates.";
+
+  // fallback / fuzzy
+  // try to match skill names
+  for(const s of portfolioData.skills){
+    if(q.includes(s.name.toLowerCase()) || q.includes(s.id)){
+      const certs = s.certificates.map(c=>c.title).join(", ");
+      const projs = s.projects.map(p=>p.title).join("; ");
+      return `${s.name}: Certificates — ${certs}. Projects — ${projs}.`;
+    }
+  }
+
+  // if nothing matched
+  return "Sorry — I couldn't find a direct answer in the embedded portfolio. Try asking about 'Cloud', 'Internships', 'Projects' or 'Certificates'.";
+}
+
+/* send message handler */
+function sendUserMessage(){
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if(!text) return;
+  appendMessage(escapeHtml(text),"user");
+  input.value = "";
+  const reply = answerFromPortfolio(text);
+  // show typed reply
+  setTimeout(()=>botReplyTyped(reply, 300), 200);
+}
+
+/* helper used by quick buttons */
+function askBot(text){
+  appendMessage(escapeHtml(text),"user");
+  const reply = answerFromPortfolio(text);
+  setTimeout(()=>botReplyTyped(reply, 300), 200);
+}
+
+/* small helper functions */
+function formatDate(d){
+  if(!d) return d;
+  // if YYYY-MM
+  if(/^\d{4}-\d{2}$/.test(d)){
+    const [y,m] = d.split("-");
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${months[parseInt(m,10)-1]} ${y}`;
+  }
+  return d;
+}
+
+function escapeHtml(str){
+  return str.replace(/[&<>"']/g, s=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+/* theme toggle */
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.onclick = () => {
+  document.body.classList.toggle("light");
+  themeToggle.textContent = document.body.classList.contains("light") ? "☀️" : "🌙";
+};
+
+/* small auto-greeting on load */
+window.addEventListener("load", () => {
+  setTimeout(()=> askBot("Hello — introduce yourself"), 800);
+});
+
+/* scroll util */
+function scrollToSection(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+</script>
+</body>
+</html>
